@@ -1,6 +1,8 @@
 from flask import Flask
-from models import db, User
+from models import User
 from werkzeug.security import generate_password_hash
+from extensions import db, login_manager
+from routes import auth, admin, staff, user
 
 app = Flask(__name__)
 
@@ -12,6 +14,24 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # db
 db.init_app(app)
+
+# Login
+login_manager.init_app(app)
+login_manager.login_view = "auth.login"
+login_manager.login_message = "Please log in to access this page."
+login_manager.login_message_category = "warning"
+
+# Blueprints
+app.register_blueprint(auth.auth_bp, url_prefix = "/auth")
+app.register_blueprint(admin.admin_bp, url_prefix = "/admin")
+app.register_blueprint(staff.staff_bp, url_prefix = "/staff")
+app.register_blueprint(user.user_bp, url_prefix = "/user")
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 
 def init_db() : 
     with app.app_context() :

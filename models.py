@@ -1,8 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
+from extensions import db
 from flask_login import UserMixin
 from datetime import datetime
-
-db = SQLAlchemy()
 
 class User(UserMixin, db.Model) :
     __tablename__ = "users"
@@ -64,8 +62,8 @@ class Booking(db.Model) :
     id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)
     trek_id = db.Column(db.Integer, db.ForeignKey("treks.id"), nullable = False)
-    payment_status = db.Column(db.String(20), nullable = False, default = "Pending" ) # Pending, Paid, Refunded
-    status = db.Column(db.String(20), nullable = False, default = "Booked")  # Booked, Cancelled, Completed
+    payment_status = db.Column(db.String(20), nullable = False, default = "pending" ) # Pending, Paid, Refunded
+    status = db.Column(db.String(20), nullable = False, default = "booked")  # Booked, Cancelled, Completed
     booking_date = db.Column(db.DateTime, default = datetime.utcnow)
 
     def __repr__(self):
