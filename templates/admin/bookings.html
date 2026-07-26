@@ -1,0 +1,165 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container mt-4">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Booking Records & Trekking History</h2>
+        </div>
+	</div>	
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET">
+                <div class="row g-3 px-2">
+
+                    <div class="col-md-10">
+                        <label class="form-label">Search</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="search"
+                            placeholder="Search by user/trek name or ID..."
+                            value="{{ search}}"
+                        />
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i>
+                            Search
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="d-flex gap-3 mb-4 flex-wrap">
+        
+        <a href="{{ url_for('admin.bookings', status='all', search=search) }}"
+            class="text-decoration-none text-dark">
+            <div class="card {% if status=='all' %}active-tab{% endif %}">
+                <div class="card-body py-2 px-3">
+                    <span class="fw-semibold">
+                        All ({{ all_count }})
+                    </span>
+                </div>
+            </div>
+
+        </a>
+        <a href="{{ url_for('admin.bookings', status='booked', search=search) }}"
+            class="text-decoration-none text-dark">
+            <div class="card {% if status=='booked' %}active-tab{% endif %}">
+                <div class="card-body py-2 px-3 d-flex align-items-center gap-4">
+                    <span class="fw-semibold">
+                        Booked ({{ booked }})
+                    </span>
+                </div>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.bookings', status='completed', search=search) }}"
+            class="text-decoration-none text-dark">
+            <div class="card {% if status=='completed' %}active-tab{% endif %}">
+                <div class="card-body py-2 px-3 d-flex align-items-center gap-4">
+                    <span class="fw-semibold">
+                        Completed ({{ completed }})
+                    </span>
+                </div>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.bookings', status='cancelled', search=search) }}"
+            class="text-decoration-none text-dark">
+            <div class="card {% if status=='cancelled' %}active-tab{% endif %}">
+                <div class="card-body py-2 px-3 d-flex align-items-center gap-4">
+                    <span class="fw-semibold">
+                        Cancelled ({{ cancelled }})
+                    </span>
+                </div>
+            </div>
+        </a>
+
+    </div>
+
+	{% if bookings %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table  table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th> 
+                        <th>User</th> 
+                        <th>Trek</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.id }}</td>
+                        <td>{{ booking.user.full_name }}</td>
+                        <td>{{ booking.trek.name }}</td>
+                        <td>{{ booking.booking_date.strftime("%d %b %Y") }}</td>
+                        <td>
+                            {% if booking.status == "booked" %}
+                            <span class="badge py-2 bg-primary"> {{ booking.status|capitalize }} </span>
+
+                            {% elif booking.status == "completed" %}
+                            <span class="badge py-2 bg-success"> {{ booking.status|capitalize }} </span>
+
+                            {% else %}
+                            <span class="badge py-2 bg-danger"> {{ booking.status|capitalize }}</span>
+
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if booking.payment_status == "paid" %}
+                            <span class="badge py-2 bg-success">{{ booking.payment_status|capitalize }}</span>
+
+                            {% elif booking.payment_status == "refunded" %}
+                            <span class="badge py-2 bg-primary">{{ booking.payment_status|capitalize }}</span>
+
+                            {% else %}
+                            <span class="badge py-2 bg-warning text-dark">{{ booking.payment_status|capitalize }} </span>
+
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+	{% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+                {% if search %}
+                <h5>No booking matched "{{ search }}".</h5>
+
+                {% elif status == "booked" %}
+                <h5>No booked treks found.</h5>
+
+                {% elif status == "completed" %}
+                <h5>No trekking history found.</h5>
+
+                {% elif status == "cancelled" %}
+                <h5>No cancelled bookings found.</h5>
+
+                {% else %}
+                <h5>No bookings found.</h5>
+                
+                {% endif %}
+
+        </div>
+    </div>
+	{% endif %}
+
+</div>
+
+{% endblock %}

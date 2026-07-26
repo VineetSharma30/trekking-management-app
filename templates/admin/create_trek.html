@@ -1,0 +1,80 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<div class="container mt-4">
+	<h2>Create Trek</h2>
+
+	<form method="POST">
+		<div class="mb-3">
+			<label class="form-label">Trek Name</label>
+			<input type="text" class="form-control" name="name" required />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Location</label>
+			<input type="text" class="form-control" name="location" required />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Difficulty</label>
+
+			<select class="form-select" name="difficulty" required>
+				<option value="">Select</option>
+				<option>Easy</option>
+				<option>Moderate</option>
+				<option>Hard</option>
+			</select>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Duration (Days)</label>
+			<input
+				type="number"
+				class="form-control"
+				name="duration_days"
+				min="1"
+				required
+			/>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Total Slots</label>
+			<input
+				type="number"
+				class="form-control"
+				name="total_slots"
+				min="1"
+				required
+			/>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Start Date</label>
+			<input
+				type="date"
+				class="form-control"
+				name="start_date"
+				required
+			/>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">End Date</label>
+			<input type="date" class="form-control" name="end_date" required />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Description</label>
+
+			<textarea
+				class="form-control"
+				rows="4"
+				name="description"
+			></textarea>
+		</div>
+
+		<button class="btn btn-success">Create Trek</button>
+	</form>
+</div>
+
+{% endblock %}

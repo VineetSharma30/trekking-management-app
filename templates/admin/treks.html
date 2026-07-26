@@ -1,0 +1,179 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<div class="container mt-4">
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h2>Manage Treks</h2>
+		<a href="{{ url_for('admin.create_trek') }}" class="btn btn-success">
+			<i class="bi bi-plus-circle"></i>
+			Add Trek
+		</a>
+	</div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET">
+                <div class="row g-3 px-2">
+
+                    <div class="col-md-10">
+                        <label class="form-label">Search</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="search"
+                            placeholder="Search by name or ID..."
+                            value="{{ search}}"
+                        />
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i>
+                            Search
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+	{% if treks %}
+	<div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover align-middle mb-0">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Name</th>
+						<th>Location</th>
+						<th>Difficulty</th>
+						<th>Duration</th>
+						<th>Slots</th>
+						<th>Status</th>
+						<th>Staff Assigned</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+
+					{% for trek in treks %}
+					<tr>
+						<td>{{ trek.id }}</td>
+						<td>{{ trek.name }}</td>
+						<td>{{ trek.location }}</td>
+						<td>{{ trek.difficulty }}</td>
+						<td>{{ trek.duration_days }} Days</td>
+						<td>{{ trek.available_slots }}/{{ trek.total_slots }}</td>
+						<td>
+							 {% if trek.status == "open" %}
+							<span class="badge py-2 bg-success">
+								{{ trek.status|capitalize }}
+							</span>
+
+							{% elif trek.status == "completed" %}
+							<span class="badge py-2 bg-primary">
+								{{ trek.status|capitalize }}
+							</span>
+
+							{% else %}
+							<span class="badge py-2 bg-danger">
+								{{ trek.status|capitalize }}
+							</span>
+
+							{% endif %}
+						</td>
+
+						<td>
+							{% if trek.assigned_staff %}
+								{{ trek.assigned_staff.full_name }}
+							{% else %}
+								Not Assigned
+							{% endif %}
+						</td>
+
+						<td>
+							<div class="d-flex gap-2">
+								<a href="{{ url_for('admin.edit_trek', trek_id=trek.id)}}" class="btn btn-success btn-sm"> Edit </a>
+								{%  if not trek.assigned_staff %}
+								<a href="{{ url_for('admin.assign_staff', trek_id=trek.id)}}" class="btn btn-info btn-sm"> Assign </a>
+								{% elif trek.assigned_staff %}
+								<a href="{{ url_for('admin.assign_staff', trek_id=trek.id)}}" class="btn btn-info btn-sm"> Reassign </a>
+								{% endif %}
+								<button
+									type="button"
+									class="btn btn-danger btn-sm"
+									data-bs-toggle="modal"
+									data-bs-target="#deleteModal{{ trek.id }}"> 
+									Delete
+								</button>
+							</div>
+						</td>
+					</tr>
+					<div class="modal fade" id="deleteModal{{ trek.id }}" tabindex="-1">
+
+						<div class="modal-dialog">
+
+							<div class="modal-content">
+
+								<div class="modal-header">
+
+									<h5 class="modal-title">
+										Delete Trek
+									</h5>
+
+									<button
+										type="button"
+										class="btn-close"
+										data-bs-dismiss="modal">
+									</button>
+
+								</div>
+
+								<div class="modal-body">
+									Are you sure you want to delete
+									<strong>{{ trek.name }}</strong>?
+								</div>
+
+								<div class="modal-footer">
+									<button
+										type="button"
+										class="btn btn-secondary"
+										data-bs-dismiss="modal">
+										Cancel
+									</button>
+
+									<form method="POST"
+										action="{{ url_for('admin.delete_trek', trek_id=trek.id) }}">
+										<button class="btn btn-danger">
+											Delete
+										</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					{% endfor %}
+
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	{% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+                {% if search %}
+                <h5>No treks matched "{{ search }}".</h5>
+
+                {% else %}
+                <h5>No Treks Found.</h5>
+
+                {% endif %}
+
+        </div>
+    </div>
+	{% endif %}
+</div>
+
+{% endblock %}

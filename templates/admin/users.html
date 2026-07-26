@@ -1,0 +1,119 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container mt-4">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Manage Users</h2>
+        </div>
+	</div>	
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET">
+                <div class="row g-3 px-2">
+
+                    <div class="col-md-10">
+                        <label class="form-label">Search</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="search"
+                            placeholder="Search by name or ID..."
+                            value="{{ search}}"
+                        />
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i>
+                            Search
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+	{% if users %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>User ID</th> 
+                        <th>Name</th> 
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Bookings</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.full_name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.phone }}</td>
+                        <td>{{ user.bookings|length }}</td>
+                        <td>
+                            {% if user.status == "active" %}
+                            <span class="badge py-2 bg-success">Active</span>
+
+                            {% else %}
+                            <span class="badge py-2 bg-danger"> {{ user.status|capitalize }} </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.status == "active" %}
+                            <form method="POST" action="{{ url_for('admin.change_account_status', user_id=user.id) }}">
+
+                                <input type="hidden" name="status" value="blacklisted">
+                                <input type="hidden" name="next" value="admin.users">
+                                <button class="btn btn-danger btn-sm"> Blacklist </button>
+                            </form>
+
+                            {% else %}
+                            <form method="POST" action="{{ url_for('admin.change_account_status', user_id=user.id) }}">
+
+                                <input type="hidden" name="status" value="active">
+                                <input type="hidden" name="next" value="admin.users">
+                                <button class="btn btn-success btn-sm">
+                                    Activate
+                                </button>
+                            </form>
+
+                            {% endif %}
+
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+	{% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+                {% if search %}
+                <h5>No users matched "{{ search }}".</h5>
+
+                {% else %}
+                <h5>No users have registered yet.</h5>
+
+                {% endif %}
+
+        </div>
+    </div>
+
+	{% endif %}
+
+</div>
+
+{% endblock %}

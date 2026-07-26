@@ -44,7 +44,7 @@ class Trek(db.Model) :
     total_slots = db.Column(db.Integer, nullable = False)
     available_slots = db.Column(db.Integer, nullable = False)
     assigned_staff_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = True)
-    status = db.Column(db.String(20), nullable = False, default="Open")  # Open, Closed, Completed
+    status = db.Column(db.String(20), nullable = False, default="open")  # Open, Closed, Completed
     start_date = db.Column(db.Date, nullable = False)
     end_date = db.Column(db.Date, nullable = False)
     description = db.Column(db.Text, default="")

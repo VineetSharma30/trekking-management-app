@@ -1,8 +1,9 @@
-from flask import Flask
+from flask import Flask, render_template, redirect, url_for
 from models import User
 from werkzeug.security import generate_password_hash
 from extensions import db, login_manager
 from routes import auth, admin, staff, user
+from flask_login import current_user
 
 app = Flask(__name__)
 
@@ -55,11 +56,16 @@ def init_db() :
             print("Default admin already exists.")
 
 
-# Temporary Route
 @app.route("/")
-def home():
-    return "Trekking Management Application"
-
+def index():
+    if current_user.is_authenticated:
+        if current_user.role == "admin":
+            return redirect(url_for("admin.dashboard"))
+        elif current_user.role == "staff":
+            return redirect(url_for("staff.dashboard"))
+        else:
+            return redirect(url_for("user.dashboard"))
+    return render_template("landing.html")
 
 if __name__ == "__main__":
     init_db()

@@ -1,0 +1,119 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<div class="container mt-4">
+	<h2>Edit Trek</h2>
+
+	<form method="POST">
+		<div class="mb-3">
+			<label class="form-label">Trek Name</label>
+			<input 
+                type="text" 
+                class="form-control" 
+                name="name" 
+                value="{{ trek.name }}"
+                required
+            />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Location</label>
+			<input 
+                type="text" 
+                class="form-control" 
+                name="location"
+                value="{{ trek.location }}" 
+                required 
+            />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Difficulty</label>
+
+			<select class="form-select" name="difficulty" required>
+				<option value="">Select</option>
+				<option
+                    value="Easy"
+                    {% if trek.difficulty=="Easy" %}
+                    selected
+                    {% endif %}>
+                    Easy
+                </option>
+				<option
+                    value="Moderate"
+                    {% if trek.difficulty=="Moderate" %}
+                    selected
+                    {% endif %}>
+                    Moderate
+                </option>
+				<option
+                    value="Hard"
+                    {% if trek.difficulty=="Hard" %}
+                    selected
+                    {% endif %}>
+                    Hard
+                </option>
+				
+			</select>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Duration (Days)</label>
+			<input
+				type="number"
+				class="form-control"
+				name="duration_days"
+				min="1"
+                value="{{ trek.duration_days }}"
+				required
+			/>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Total Slots</label>
+			<input
+				type="number"
+				class="form-control"
+				name="total_slots"
+				min="1"
+                value="{{ trek.total_slots }}"
+				required
+			/>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Start Date</label>
+			<input
+				type="date"
+				class="form-control"
+				name="start_date"
+                value="{{ trek.start_date.strftime('%Y-%m-%d') }}"
+				required
+			/>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">End Date</label>
+			<input 
+                type="date" 
+                class="form-control" 
+                name="end_date" 
+                value="{{ trek.end_date.strftime('%Y-%m-%d') }}"
+                required />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Description</label>
+
+			<textarea
+				class="form-control"
+				rows="4"
+				name="description"
+			>{{ trek.description }}</textarea>
+		</div>
+
+		<button class="btn btn-success">Update Trek</button>
+	</form>
+</div>
+
+{% endblock %}

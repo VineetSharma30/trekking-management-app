@@ -1,0 +1,193 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container mt-4">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2> Manage Staff </h2>
+        </div>
+	</div>	
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET">
+                <div class="row g-3 px-2">
+
+                    <div class="col-md-10">
+                        <label class="form-label">Search</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="search"
+                            placeholder="Search by name or ID..."
+                            value="{{ search}}"
+                        />
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i>
+                            Search
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+	<div class="d-flex gap-3 mb-4 flex-wrap">
+
+        <a href="{{ url_for('admin.staff', status='all', search=search) }}"
+            class="text-decoration-none text-dark">
+            <div class="card {% if status=='all' %}active-tab{% endif %}">
+                <div class="card-body py-2 px-3 d-flex align-items-center gap-4">
+                    <span class="fw-semibold">
+                        All ({{ all_count }})
+                    </span>
+                </div>
+            </div>
+
+        </a>
+        <a href="{{ url_for('admin.staff', status='pending', search=search) }}"
+            class="text-decoration-none text-dark">
+            <div class="card {% if status=='pending' %}active-tab{% endif %}">
+                <div class="card-body py-2 px-3 d-flex align-items-center gap-4">
+                    <span class="fw-semibold">
+                        Pending ({{ pending }})
+                    </span>
+                </div>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.staff', status='approved', search=search) }}"
+            class="text-decoration-none text-dark">
+            <div class="card {% if status=='approved' %}active-tab{% endif %}">
+                <div class="card-body py-2 px-3 d-flex align-items-center gap-4">
+                    <span class="fw-semibold">
+                        Approved ({{ approved }})
+                    </span>
+                </div>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.staff', status='blacklisted', search=search) }}"
+            class="text-decoration-none text-dark">
+            <div class="card {% if status=='blacklisted' %}active-tab{% endif %}">
+                <div class="card-body py-2 px-3 d-flex align-items-center gap-4">
+                    <span class="fw-semibold">
+                        Blacklisted ({{ blacklisted }})
+                    </span>
+                </div>
+            </div>
+        </a>
+
+    </div>
+
+	{% if staff_members %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Staff ID</th> 
+                        <th>Name</th> 
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for staff in staff_members %}
+                    <tr>
+                        <td>{{ staff.id }}</td>
+                        <td>{{ staff.full_name }}</td>
+                        <td>{{ staff.email }}</td>
+                        <td>{{ staff.phone }}</td>
+                        <td>
+                            {% if staff.status == "blacklisted" %}
+                            <span class="badge py-2 bg-danger">{{ staff.status|capitalize }}</span>
+                            {% elif staff.staff_profile.approval_status == "approved" %}
+                            <span class="badge py-2 bg-success">{{ staff.staff_profile.approval_status|capitalize }}</span>
+
+                            {% elif staff.staff_profile.approval_status == "pending" %}
+                            <span class="badge py-2 bg-warning">{{ staff.staff_profile.approval_status|capitalize }}</span>
+
+                            {% else %}
+                            <span class="badge py-2 bg-danger">{{ staff.staff_profile.approval_status|capitalize }}</span>
+
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+
+                                {% if staff.staff_profile.approval_status == "pending" %}
+                                <form 
+                                    method="POST"
+                                    action="{{ url_for('admin.approve_staff', user_id=staff.id) }}">
+                                    
+                                    <button class="btn btn-success btn-sm"> Approve </button>
+                                </form>
+                                
+                                <form 
+                                    method="POST"
+                                    action="{{ url_for('admin.reject_staff', user_id=staff.id) }}">
+
+                                    <button class="btn btn-danger btn-sm"> Reject </button>
+                                </form>
+
+                                {% elif staff.status == "active" %}
+                                <form method="POST" action="{{ url_for('admin.change_account_status', user_id=staff.id) }}">
+
+                                    <input type="hidden" name="status" value="blacklisted">
+                                    <input type="hidden" name="next" value="admin.staff">
+                                    <button class="btn btn-danger btn-sm"> Blacklist </button>
+                                </form>
+                                
+                                {% elif staff.status == "blacklisted" %}
+                                <form method="POST" action="{{ url_for('admin.change_account_status', user_id=staff.id) }}">
+                                
+                                    <input type="hidden" name="status" value="active">
+                                    <input type="hidden" name="next" value="admin.staff">
+                                    <button class="btn btn-success btn-sm"> Activate </button>
+                                </form>
+
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+	{% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+                {% if search %}
+                <h5>No staff matched "{{ search }}"</h5>
+
+                {% elif status == "pending" %}
+                <h5>No pending staff requests.</h5>
+
+                {% elif status == "approved" %}
+                <h5>No approved staff.</h5>
+
+                {% elif status == "blacklisted" %}
+                <h5>No blacklisted staff.</h5>
+
+                {% else %}
+                <h5>No staff found.</h5>
+
+                {% endif %}
+
+        </div>
+    </div>
+
+	{% endif %}
+
+</div>
+
+{% endblock %}
