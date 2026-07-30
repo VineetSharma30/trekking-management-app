@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>My Treks</h2>
+            <p class="text-muted mb-0">
+                View and manage your assigned treks.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <form method="GET">
+                <div class="row g-3 px-2">
+
+                    <div class="col-md-10">
+                        <label class="form-label"> Search </label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="search"
+                            placeholder="Search by trek name or ID..."
+                            value="{{ search }}"
+                        >
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i>
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    {% if treks %}
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Trek Name</th>
+                        <th>Location</th>
+                        <th>Duration</th>
+                        <th>Participants</th>
+                        <th>Slots</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for trek in treks %}
+                    <tr>
+                        <td>{{ trek.id }}</td>
+                        <td> <strong>{{ trek.name }}</strong> </td>
+                        <td>{{ trek.location }}</td>
+                        <td>{{ trek.duration_days }} Days</td>
+                        <td>{{ trek.bookings|length }}</td>
+                        <td>{{ trek.available_slots }}/{{ trek.total_slots }}</td>
+                        <td>
+                            {% if trek.status == "open" %}
+                            <span class="badge bg-success py-2"> Open </span>
+
+                            {% elif trek.status == "started" %}
+                            <span class="badge bg-warning text-dark py-2"> Started </span>
+
+                            {% elif trek.status == "ongoing" %}
+                            <span class="badge bg-info text-dark py-2"> Ongoing </span>
+
+                            {% elif trek.status == "completed" %}
+                            <span class="badge bg-primary py-2"> Completed </span>
+
+                            {% else %}
+                            <span class="badge bg-danger py-2"> Closed </span>
+
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('staff.manage_trek', trek_id=trek.id) }}"
+                                class="btn btn-outline-primary btn-sm">
+                                Manage
+                            </a>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% else %}
+
+    <div class="card">
+        <div class="card-body text-center py-5">
+
+            {% if search %}
+                <h5>No trek matched "{{ search }}".</h5>
+                <p class="text-muted mb-0">
+                    Try searching with another keyword.
+                </p>
+
+            {% else %}
+                <h5>No Treks Assigned.</h5>
+                <p class="text-muted mb-0">
+                    You have not been assigned any treks yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

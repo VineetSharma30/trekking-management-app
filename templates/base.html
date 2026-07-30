@@ -14,6 +14,18 @@
     <body>
 
         {% if current_user.is_authenticated %}
+
+            {% if current_user.role == "admin" %}
+                {% set dashboard = 'admin.dashboard' %}
+
+            {% elif current_user.role == "staff" %}
+                {% set dashboard = 'staff.dashboard' %}
+
+            {% else %}
+                {% set dashboard = '' %}
+
+            {% endif %}
+
         <div class="wrapper">
             <aside class="sidebar">
 
@@ -21,7 +33,8 @@
 
                 <ul class="sidebar-menu">
                     <li>
-                        <a href="{{ url_for('admin.dashboard') }}">
+                        <a href="{{ url_for(dashboard) }}"
+                        class="{% if request.endpoint==dashboard %}active{% endif %}">
                             <i class="bi bi-house-door"></i>
                             <span>Dashboard</span>
                         </a>
@@ -29,25 +42,29 @@
                     
                     {% if current_user.role=="admin" %}
                     <li>
-                        <a href="{{ url_for('admin.treks') }}" class="{% if request.endpoint=='admin.treks' %}active{% endif %}">
+                        <a href="{{ url_for('admin.treks') }}" 
+                        class="{% if request.endpoint=='admin.treks' %}active{% endif %}">
                             <i class="bi bi-map"></i>
                             <span>Treks</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url_for('admin.staff') }}" class="{% if request.endpoint=='admin.staff' %}active{% endif %}">
+                        <a href="{{ url_for('admin.staff') }}" 
+                        class="{% if request.endpoint=='admin.staff' %}active{% endif %}">
                             <i class="bi bi-person"></i>
                             <span>Staff</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url_for('admin.users') }}">
+                        <a href="{{ url_for('admin.users') }}"
+                        class="{% if request.endpoint=='admin.users' %}active{% endif %}">
                             <i class="bi bi-people"></i>
                             <span>Users</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url_for('admin.bookings') }}">
+                        <a href="{{ url_for('admin.bookings') }}"
+                        class="{% if request.endpoint=='admin.bookings' %}active{% endif %}">
                             <i class="bi bi-calendar-check"></i>
                             <span>Bookings</span>
                         </a>
@@ -55,15 +72,23 @@
 
                     {% elif current_user.role=="staff" %}
                     <li>
-                        <a href="#">
+                        <a href="{{ url_for('staff.my_treks')}}"
+                        class="{% if request.endpoint=='staff.my_treks' %}active{% endif %}">
                             <i class="bi bi-map"></i>
-                            <span>My Trek</span>
+                            <span>My Treks</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{{ url_for('staff.participants')}}"
+                        class="{% if request.endpoint=='staff.participants' %}active{% endif %}">
                             <i class="bi bi-people"></i>
                             <span>Participants</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('staff.profile')}}">
+                            <i class="bi bi-person"></i>
+                            <span>Profile</span>
                         </a>
                     </li>
 

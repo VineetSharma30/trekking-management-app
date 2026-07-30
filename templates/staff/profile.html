@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>My Profile</h2>
+            <p class="text-muted mb-0">
+                View and update your profile information.
+            </p>
+        </div>
+    </div>
+
+    <form method="POST">
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Profile Information</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Username</label>
+                        <input
+                            type="text"
+                            class="form-control bg-light"
+                            value="{{ current_user.username }}"
+                            readonly
+                        >
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="full_name"
+                            value="{{ current_user.full_name }}"
+                            required
+                        >
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Role</label>
+                        <input
+                            type="text"
+                            class="form-control bg-light"
+                            value="{{ current_user.role|capitalize }}"
+                            readonly
+                        >
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        <input
+                            type="email"
+                            class="form-control"
+                            name="email"
+                            value="{{ current_user.email }}"
+                            required
+                        >
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Assigned Treks</label>
+                        <input
+                            type="text"
+                            class="form-control bg-light"
+                            value="{{ assigned_trek_count }} Trek{% if assigned_trek_count != 1 %}s{% endif %}"
+                            readonly
+                        >
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Phone</label>
+                        <input
+                            type="tel"
+                            class="form-control"
+                            name="phone"
+                            value="{{ current_user.phone or '' }}"
+                        >
+                    </div>
+                </div>
+
+                <hr>
+
+                <h6 class="mb-3">Account Information</h6>
+
+                <div class="row">
+
+                    {% if current_user.created_at %}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Registered On</label>
+                        <input
+                            type="text"
+                            class="form-control bg-light"
+                            value="{{ current_user.created_at.strftime('%d %b %Y') }}"
+                            readonly
+                        >
+                    </div>
+
+                    {% endif %}
+
+                    {% if current_user.status %}
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">Account Status</label>
+                        {% if current_user.status == "active" %}
+                        <div class="pt-2">
+                            <span class="badge bg-success py-2 px-3">
+                                Active
+                            </span>
+                        </div>
+
+                        {% elif current_user.status == "blacklisted" %}
+                        <div class="pt-2">
+                            <span class="badge bg-danger py-2 px-3">
+                                Blacklisted
+                            </span>
+                        </div>
+
+                        {% else %}
+                        <div class="pt-2">
+                            <span class="badge bg-secondary py-2 px-3">
+                                {{ current_user.status|capitalize }}
+                            </span>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                <div class="text-end">
+                    <button class="btn btn-success">
+                        Save Changes
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

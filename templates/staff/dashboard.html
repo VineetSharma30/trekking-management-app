@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>My Dashboard</h2>
+            <p class="text-muted mb-0">
+                Welcome back, {{ current_user.full_name }}.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Assigned Treks</h6>
+                        <h2 class="mb-0">{{ assigned_treks|length }}</h2>
+                    </div>
+                    <i class="bi bi-calendar-check fs-1 text-success"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Total Participants</h6>
+                        <h2 class="mb-0">{{ total_participants }}</h2>
+                    </div>
+                    <i class="bi bi-people fs-1 text-primary"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Open Treks</h6>
+                        <h2 class="mb-0">{{ open_treks }}</h2>
+                    </div>
+                  <i class="bi bi-map fs-1 text-warning"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h5 class="mb-0"> My Assigned Treks </h5>
+        <a href="#" class="btn btn-outline-primary btn-sm"> View All </a>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        {% if assigned_treks %}
+        <div class="card-body">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Trek Name</th>
+                        <th>Location</th>
+                        <th>Participants</th>
+                        <th>Slots</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for trek in assigned_treks %}
+                    <tr>
+                        <td>{{ trek.name }}</td>
+                        <td>{{ trek.location }}</td>
+                        <td>{{ trek.bookings|length }}</td>
+                        <td>{{ trek.available_slots }}/{{ trek.total_slots }}</td>
+                        <td>
+
+                            {% if trek.status == "open" %}
+                            <span class="badge py-2 bg-success"> Open </span>
+
+                            {% else %}
+                            <span class="badge py-2 bg-danger"> Closed </span>
+
+                            {% endif %}
+
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-outline-primary btn-sm"> Manage </a>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="card-body text-center py-5">
+            
+            <h5>No Treks Assigned.</h5>
+            <p class="text-muted mb-0">
+                You have not been assigned any treks yet.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

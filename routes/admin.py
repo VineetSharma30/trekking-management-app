@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, abort, request
 from flask_login import login_required, current_user
 from sqlalchemy import or_
 from .utils import redirect_dashboard
@@ -163,7 +163,9 @@ def edit_trek(trek_id):
         flash("Access denied.", "danger")
         return redirect_dashboard(current_user)
 
-    trek = Trek.query.get_or_404(trek_id)
+    trek = db.session.get(Trek, trek_id)
+    if trek is None:
+        abort(404)
 
     if request.method == "POST":
 
@@ -235,7 +237,9 @@ def delete_trek(trek_id):
         flash("Access denied.", "danger")
         return redirect_dashboard(current_user)
     
-    trek = Trek.query.get_or_404(trek_id)
+    trek = db.session.get(Trek, trek_id)
+    if trek is None:
+        abort(404)
 
     if trek.bookings:
         flash("This trek has bookings and cannot be deleted.", "danger")
@@ -346,8 +350,10 @@ def approve_staff(user_id):
         flash("Access denied.", "danger")
         return redirect_dashboard(current_user)
 
-    staff = User.query.get_or_404(user_id)
-
+    staff = db.session.get(User, user_id)
+    if staff is None:
+        abort(404)
+        
     if staff.role != "staff":
         flash("Invalid staff member.", "danger")
         return redirect(url_for("admin.staff"))
@@ -379,8 +385,10 @@ def reject_staff(user_id):
         flash("Access denied.", "danger")
         return redirect_dashboard(current_user)
 
-    staff = User.query.get_or_404(user_id)
-
+    staff = db.session.get(User, user_id)
+    if staff is None:
+        abort(404)
+        
     if staff.role != "staff":
         flash("Invalid staff member.", "danger")
         return redirect(url_for("admin.staff"))
@@ -412,7 +420,9 @@ def assign_staff(trek_id):
         flash("Access denied.", "danger")
         return redirect_dashboard(current_user)
 
-    trek = Trek.query.get_or_404(trek_id)
+    trek = db.session.get(Trek, trek_id)
+    if trek is None:
+        abort(404)
 
     approved_staff = (
         User.query
@@ -448,7 +458,10 @@ def remove_staff(trek_id):
         flash("Access denied.", "danger")
         return redirect_dashboard(current_user)
 
-    trek = Trek.query.get_or_404(trek_id)
+    trek = db.session.get(Trek, trek_id)
+    if trek is None:
+        abort(404)
+
     trek.assigned_staff_id = None
 
     db.session.commit()
@@ -500,7 +513,10 @@ def change_account_status(user_id):
         flash("Access denied.", "danger")
         return redirect_dashboard(current_user)
 
-    user = User.query.get_or_404(user_id)
+    user = db.session.get(User, user_id)
+    if user is None:
+        abort(404)    
+
     status = request.form["status"]
     next_page = request.form.get("next", "admin.users")
 
