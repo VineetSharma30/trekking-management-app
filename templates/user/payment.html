@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Payment</h2>
+            <p class="text-muted mb-0">
+                Complete your payment to confirm your trek booking.
+            </p>
+        </div>
+
+        <a href="{{ url_for('user.trek_details', trek_id=trek.id) }}"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Back
+        </a>
+    </div>
+
+    <form method="POST">
+
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+
+                <div class="card shadow-sm">
+
+                    <img
+                        src="{% if trek.image_url %}{{ trek.image_url }}{% else %}{{ url_for('static', filename='images/default-trek.jpg') }}{% endif %}"
+                        class="card-img-top w-100 object-fit-cover"
+                        style="height:350px"
+                        alt="{{ trek.name }}">
+
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Trek Summary</h5>
+                        <div class="alert alert-info mt-4 mb-0">
+                            <i class="bi bi-info-circle"></i>
+                            This is a demo payment page.
+                            No real payment gateway is integrated.
+                        </div>
+                    </div>
+                    <div class="card-body">
+
+                        <table class="table table-borderless mb-0">
+                            <tr>
+                                <th width="35%">Trek</th>
+                                <td>{{ trek.name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Location</th>
+                                <td>{{ trek.location }}</td>
+                            </tr>
+                            <tr>
+                                <th>Difficulty</th>
+                                <td>
+
+                                    {% if trek.difficulty=="Easy" %}
+                                    <span class="badge bg-success py-2">Easy</span>
+
+                                    {% elif trek.difficulty=="Moderate" %}
+                                    <span class="badge bg-warning text-dark py-2">Moderate</span>
+
+                                    {% else %}
+                                    <span class="badge bg-danger py-2">Hard</span>
+
+                                    {% endif %}
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Duration</th>
+                                <td>
+                                    {{ trek.duration_days }}
+                                    Day{% if trek.duration_days != 1 %}s{% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Trek Dates</th>
+                                <td>
+                                    {{ trek.start_date.strftime("%d %b %Y") }}
+                                    -
+                                    {{ trek.end_date.strftime("%d %b %Y") }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Available Slots</th>
+                                <td>{{ trek.available_slots }}/{{ trek.total_slots }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Payment Details</h5>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="mb-4">
+                            <label class="form-label">Payment Method</label>
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="payment_method"
+                                    id="upi"
+                                    value="UPI"
+                                    checked>
+                                <label class="form-check-label" for="upi">
+                                    UPI
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="payment_method"
+                                    id="credit_card"
+                                    value="Credit Card">
+                                <label class="form-check-label" for="credit_card">
+                                    Credit Card
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="payment_method"
+                                    id="debit_card"
+                                    value="Debit Card">
+                                <label class="form-check-label" for="debit_card">
+                                    Debit Card
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="payment_method"
+                                    id="net_banking"
+                                    value="Net Banking">
+                                <label class="form-check-label" for="net_banking">
+                                    Net Banking
+                                </label>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Trek Price</span>
+                            <strong>₹{{ "%.0f"|format(trek.price) }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>GST</span>
+                            <span>Included</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">Total Payable</h5>
+                            <h4 class="text-success mb-0">
+                                ₹{{ "%.0f"|format(trek.price) }}
+                            </h4>
+                        </div>
+                        <div class="d-grid">
+                            <button
+                                type="submit"
+                                class="btn btn-success btn-lg">
+                                <i class="bi bi-shield-check"></i>
+                                Pay ₹{{ "%.0f"|format(trek.price) }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

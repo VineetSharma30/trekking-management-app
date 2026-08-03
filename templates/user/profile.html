@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>My Profile</h2>
+            <p class="text-muted mb-0">
+                View and update your account information.
+            </p>
+        </div>
+    </div>
+
+    <form method="POST">
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+
+                <div class="card shadow-sm">
+
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            Personal Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name</label>
+                                <input
+                                    type="text"
+                                    class="form-control border-primary"
+                                    name="full_name"
+                                    value="{{ current_user.full_name }}"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Username</label>
+                                <input
+                                    type="text"
+                                    class="form-control bg-light"
+                                    value="{{ current_user.username }}"
+                                    readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address</label>
+                                <input
+                                    type="email"
+                                    class="form-control border-primary"
+                                    name="email"
+                                    placeholder="Enter email address"
+                                    value="{{ current_user.email }}"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone Number</label>
+                                <input
+                                    type="tel"
+                                    class="form-control border-primary"
+                                    name="phone"
+                                    placeholder="Enter phone number"
+                                    value="{{ current_user.phone or '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Role</label>
+                                <input
+                                    type="text"
+                                    class="form-control bg-light"
+                                    value="{{ current_user.role|capitalize }}"
+                                    readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            Account Summary
+                        </h5>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="mb-3">
+                            <label class="form-label">Total Bookings</label>
+                            <input
+                                type="text"
+                                class="form-control bg-light"
+                                value="{{ total_bookings }} Booking{% if total_bookings != 1 %}s{% endif %}"
+                                readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Registered On</label>
+
+                            {% if current_user.created_at %}
+                            <input
+                                type="text"
+                                class="form-control bg-light"
+                                value="{{ current_user.created_at.strftime('%d %b %Y') }}"
+                                readonly>
+
+                            {% else %}
+                            <input
+                                type="text"
+                                class="form-control bg-light"
+                                value="N/A"
+                                readonly>
+
+                            {% endif %}
+
+                        </div>
+                        <div>
+                            <label class="form-label">Account Status</label>
+                            <div>
+
+                                {% if current_user.status == "active" %}
+                                <span class="badge bg-success py-2 px-3">Active</span>
+
+                                {% else %}
+                                <span class="badge bg-danger py-2 px-3">Blacklisted</span>
+
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-end">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle"></i>
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

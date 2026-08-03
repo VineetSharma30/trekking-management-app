@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>My Bookings</h2>
+            <p class="text-muted mb-0">
+                View and manage your active trek bookings.
+            </p>
+        </div>
+    </div>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <form method="GET">
+                <div class="row g-3">
+
+                    <div class="col-md-10">
+                        <label class="form-label">Search</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="search"
+                            placeholder="Search by Trek Name or Booking ID..."
+                            value="{{ search }}">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i>
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if bookings %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Trek</th>
+                        <th>Dates</th>
+                        <th>Price</th>
+                        <th>Payment</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>#{{ booking.id }}</td>
+                        <td>{{ booking.trek.name }}</td>
+                        <td>
+                            {{ booking.trek.start_date.strftime("%d %b %Y") }}
+                            -
+                            {{ booking.trek.end_date.strftime("%d %b %Y") }}
+                        </td>
+                        <td>₹{{ "%.0f"|format(booking.trek.price) }}</td>
+                        <td>
+
+                            {% if booking.payment_status=="paid" %}
+                            <span class="badge bg-success py-2">Paid</span>
+
+                            {% elif booking.payment_status=="pending" %}
+                            <span class="badge bg-warning text-dark py-2">Pending</span>
+
+                            {% else %}
+                            <span class="badge bg-primary py-2">Refunded</span>
+
+                            {% endif %}
+
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a
+                                    href="{{ url_for('user.booking_details', booking_id=booking.id) }}"
+                                    class="btn btn-outline-primary btn-sm">
+                                    Details
+                                </a>
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-danger btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#cancelModal{{ booking.id }}">
+                                    Cancel
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Cancel Booking Modal -->
+
+                    <div
+                        class="modal fade"
+                        id="cancelModal{{ booking.id }}"
+                        tabindex="-1">
+
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                        
+                                    <h5 class="modal-title">Cancel Booking</h5>
+                                    <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal">
+                                    </button>
+
+                                </div>
+                                <div class="modal-body">
+
+                                    <p>
+                                        Are you sure you want to cancel your booking for
+                                        <strong>{{ booking.trek.name }}</strong>
+                                        ?
+                                    </p>
+                                    <hr>
+                                    <p class="mb-2">
+                                        <strong>Booking ID:</strong>
+                                        #{{ booking.id }}
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>Amount Paid:</strong>
+                                        ₹{{ "%.0f"|format(booking.trek.price) }}
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>Payment Status After Cancellation:</strong>
+                                        Payment will be marked as
+                                        <span class="badge bg-primary">Refunded</span>
+                                    </p>
+                                    <p class="text-muted mb-0">
+                                        Your reserved slot will become available for other trekkers.
+                                    </p>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button
+                                        type="button"
+                                        class="btn btn-secondary"
+                                        data-bs-dismiss="modal">
+                                        Keep Booking
+                                    </button>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('user.cancel_booking', booking_id=booking.id) }}">
+                                        <button
+                                            type="submit"
+                                            class="btn btn-danger">
+                                            Confirm Cancellation
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+
+            {% if search %}
+            <h5>
+                No bookings matched "{{ search }}".
+            </h5>
+
+            {% else %}
+            <h5>
+                No active bookings found.
+            </h5>
+            <p class="text-muted mb-0">
+                Book a trek to start your next adventure.
+            </p>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

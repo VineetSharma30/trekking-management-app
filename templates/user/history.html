@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Booking History</h2>
+            <p class="text-muted mb-0">
+                View your completed and cancelled trek bookings.
+            </p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <form method="GET">
+                <div class="row g-3 px-2">
+
+                    <div class="col-md-8">
+                        <label class="form-label">Search</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="search"
+                            placeholder="Search by trek name or booking ID..."
+                            value="{{ search }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Filter</label>
+                        <select class="form-select" name="status">
+                            <option value="all"
+                                {% if status=="all" %}selected{% endif %}>
+                                All
+                            </option>
+                            <option value="completed"
+                                {% if status=="completed" %}selected{% endif %}>
+                                Completed
+                            </option>
+                            <option value="cancelled"
+                                {% if status=="cancelled" %}selected{% endif %}>
+                                Cancelled
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i>
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if bookings %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Trek</th>
+                        <th>Trek Dates</th>
+                        <th>Booking Date</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.id }}</td>
+                        <td>{{ booking.trek.name }}</td>
+                        <td>
+                            {{ booking.trek.start_date.strftime("%d %b") }}
+                            -
+                            {{ booking.trek.end_date.strftime("%d %b %Y") }}
+                        </td>
+                        <td>{{ booking.booking_date.strftime("%d %b %Y") }}</td>
+                        <td>₹{{ "%.0f"|format(booking.trek.price) }}</td>
+                        <td>
+
+                            {% if booking.status == "completed" %}
+                            <span class="badge bg-success py-2">Completed</span>
+
+                            {% else %}
+                            <span class="badge bg-danger py-2">Cancelled</span>
+
+                            {% endif %}
+
+                        </td>
+                        <td>
+
+                            {% if booking.payment_status == "paid" %}
+                            <span class="badge bg-success py-2">Paid</span>
+
+                            {% elif booking.payment_status == "pending" %}
+                            <span class="badge bg-warning text-dark py-2">Pending</span>
+
+                            {% else %}
+                            <span class="badge bg-primary py-2">Refunded</span>
+
+                            {% endif %}
+
+                        </td>
+                        <td>
+                            <a
+                                href="{{ url_for('user.booking_details', booking_id=booking.id) }}"
+                                class="btn btn-outline-primary btn-sm">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+
+            {% if search %}
+            <h5>No bookings matched "{{ search }}".</h5>
+
+            {% elif status == "completed" %}
+            <h5>No completed bookings found.</h5>
+
+            {% elif status == "cancelled" %}
+            <h5>No cancelled bookings found.</h5>
+
+            {% else %}
+            <h5>No booking history found.</h5>
+            <p class="text-muted mb-0">
+                Your completed and cancelled bookings will appear here.
+            </p>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

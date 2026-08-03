@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Welcome, {{ current_user.full_name }}!</h2>
+            <p class="text-muted mb-0">
+                Browse available treks, book your next adventure, and track your bookings.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Total Bookings</h6>
+                        <h2 class="mb-0">{{ total_bookings }}</h2>
+                    </div>
+                    <i class="bi bi-calendar-check fs-1 text-primary"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Upcoming Treks</h6>
+                        <h2 class="mb-0">{{ upcoming_treks }}</h2>
+                    </div>
+                    <i class="bi bi-map fs-1 text-success"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Completed Treks</h6>
+                        <h2 class="mb-0">{{ completed_treks }}</h2>
+                    </div>
+                    <i class="bi bi-trophy fs-1 text-warning"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h5 class="mb-0">
+            Available Treks
+        </h5>
+
+        <a href="{{ url_for('user.browse_treks') }}"
+           class="btn btn-outline-primary btn-sm">
+            View All
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm mb-4">
+
+        {% if open_treks %}
+
+        <div class="card-body">
+
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Start Date</th>
+                        <th>Price</th>
+                        <th>Difficulty</th>
+                        <th>Slots</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for trek in open_treks %}
+                    <tr>
+                        <td>{{ trek.name }}</td>
+                        <td>{{ trek.location }}</td>
+                        <td>{{ trek.start_date.strftime("%d %b %Y") }}</td>
+                        <td>₹{{ "%.0f"|format(trek.price) }}</td>
+                        <td>
+                            {% if trek.difficulty == "easy" %}
+                            <span class="badge bg-success py-2">{{ trek.difficulty|capitalize }}</span>
+
+                            {% elif trek.difficulty == "moderate" %}
+                            <span class="badge bg-warning text-dark py-2">{{ trek.difficulty|capitalize }}</span>
+
+                            {% else %}
+                            <span class="badge bg-danger py-2">{{ trek.difficulty|capitalize }}</span>
+
+                            {% endif %}
+                        </td>
+                        <td>{{ trek.available_slots }}/{{ trek.total_slots }}</td>
+                        <td>
+                            <a href="{{ url_for('user.trek_details', trek_id=trek.id) }}"
+                               class="btn btn-outline-primary btn-sm">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+        </div>
+
+        {% else %}
+        <div class="card-body text-center py-5">
+            <h5>No treks are currently open for booking.</h5>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">My Recent Bookings</h5>
+        <a href="{{ url_for('user.my_bookings') }}"
+           class="btn btn-outline-primary btn-sm">
+            View All
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        {% if recent_bookings %}
+        <div class="card-body">
+
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Trek</th>
+                        <th>Booking Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for booking in recent_bookings %}
+                    <tr>
+                        <td>{{ booking.trek.name }}</td>
+                        <td>{{ booking.booking_date.strftime("%d %b %Y") }}</td>
+                        <td>
+                            {% if booking.status == "booked" %}
+                            <span class="badge bg-primary py-2">Booked</span>
+
+                            {% elif booking.status == "completed" %}
+                            <span class="badge bg-success py-2">Completed</span>
+
+                            {% else %}
+                            <span class="badge bg-danger py-2">Cancelled</span>
+
+                            {% endif %}
+
+                        </td>
+                        <td>
+                            <a href="{{ url_for('user.booking_details', booking_id=booking.id) }}"
+                               class="btn btn-outline-primary btn-sm">
+                                View Details
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+        </div>
+
+        {% else %}
+        <div class="card-body text-center py-5">
+            <h5>No bookings found.</h5>
+            <p class="text-muted mb-0">
+                Book your first trek to get started.
+            </p>
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

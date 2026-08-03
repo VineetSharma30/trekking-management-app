@@ -61,7 +61,7 @@
 						<td>{{ trek.id }}</td>
 						<td>{{ trek.name }}</td>
 						<td>{{ trek.location }}</td>
-						<td>{{ trek.difficulty }}</td>
+						<td>{{ trek.difficulty|capitalize }}</td>
 						<td>{{ trek.duration_days }} Days</td>
 						<td>{{ trek.available_slots }}/{{ trek.total_slots }}</td>
 						<td>
@@ -87,7 +87,9 @@
 							{% if trek.assigned_staff %}
 								{{ trek.assigned_staff.full_name }}
 							{% else %}
-								Not Assigned
+								<span class="text-muted" >
+									Not Assigned
+								</span>
 							{% endif %}
 						</td>
 

@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>{{ trek.name }}</h2>
+            <p class="text-muted mb-0">
+                View trek details before booking.
+            </p>
+        </div>
+        <a href="{{ url_for('user.browse_treks') }}"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Back
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <img
+            src="{{ trek.image_url or url_for('static', filename='images/default-trek.jpg') }}"
+            class="img-fluid rounded shadow-sm mb-4 w-60 object-fit-cover"
+            style="height:350px"
+            alt="{{ trek.name }}"
+        >
+        <div class="card-header bg-white">
+            <h5 class="mb-0">
+                Trek Information
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-md-6">
+
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <th>Location</th>
+                            <td>{{ trek.location }}</td>
+                        </tr>
+                        <tr>
+                            <th>Difficulty</th>
+                            <td>
+
+                                {% if trek.difficulty == "Easy" %}
+                                <span class="badge bg-success py-2">Easy</span>
+
+                                {% elif trek.difficulty == "Moderate" %}
+                                <span class="badge bg-warning text-dark py-2">Moderate</span>
+
+                                {% else %}
+                                <span class="badge bg-danger py-2">Hard</span>
+
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Duration</th>
+                            <td>
+                                {{ trek.duration_days }}
+                                Day{% if trek.duration_days != 1 %}s{% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Price</th>
+                            <td >₹{{ "%.0f"|format(trek.price) }}</td>
+                        </tr>
+                        <tr>
+                            <th>Start Date</th>
+                            <td>{{ trek.start_date.strftime("%d %b %Y") }}</td>
+                        </tr>
+                        <tr>
+                            <th>End Date</th>
+                            <td>{{ trek.end_date.strftime("%d %b %Y") }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <th>Total Slots</th>
+                            <td>{{ trek.total_slots }}</td>
+                        </tr>
+                        <tr>
+                            <th>Available Slots</th>
+                            <td>{{ trek.available_slots }}/{{ trek.total_slots }}</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td>
+
+                                {% if trek.status == "open" %}
+                                <span class="badge bg-success py-2">{{ trek.status|capitalize }}</span>
+
+                                {% elif trek.status == "completed" %}
+                                <span class="badge bg-primary py-2">{{ trek.status|capitalize }}</span>
+
+                                {% else %}
+                                <span class="badge bg-danger py-2">{{ trek.status|capitalize }}</span>
+
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Trek Staff</th>
+                            <td>
+
+                                {% if trek.assigned_staff %}
+                                {{ trek.assigned_staff.full_name }}
+
+                                {% else %}
+                                <span class="text-muted">
+                                    Not Assigned
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <hr>
+
+            <h6>Description</h6>
+            <p class="mb-4">
+
+                {% if trek.description %}
+                {{ trek.description }}
+
+                {% else %}
+                <span class="text-muted">
+                    No description available.
+                </span>
+
+                {% endif %}
+
+            </p>
+
+            <div class="text-end">
+
+                {% if not already_booked
+                      and trek.status == "open"
+                      and trek.available_slots > 0 %}
+
+                <form method="POST"
+                    action="{{ url_for('user.payment', trek_id=trek.id) }}">
+
+                    <button class="btn btn-success">
+                        <i class="bi bi-calendar-check"></i>
+                        Proceed to Payment
+                    </button>
+                </form>
+
+                {% elif already_booked %}
+                <button
+                    class="btn btn-secondary"
+                    disabled>
+                    Already Booked
+                </button>
+
+                {% elif trek.status != "open" %}
+                <button
+                    class="btn btn-danger"
+                    disabled>
+                    Trek Closed
+                </button>
+
+                {% else %}
+                <button
+                    class="btn btn-warning text-dark"
+                    disabled>
+                    No Slots Available
+                </button>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

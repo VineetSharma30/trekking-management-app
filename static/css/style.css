@@ -161,6 +161,15 @@ body{
     max-width: 90%;
     z-index: 9999;
 }
+.flash-container-auth{
+    position: fixed;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 460px;
+    max-width: 90%;
+    z-index: 9999;
+}
 
 .flash-container .alert{
     margin-bottom: 10px;

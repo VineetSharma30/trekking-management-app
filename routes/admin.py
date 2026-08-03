@@ -93,7 +93,7 @@ def create_trek():
 
         name = request.form["name"].strip()
         location = request.form["location"].strip()
-        difficulty = request.form["difficulty"].strip()
+        difficulty = request.form["difficulty"].lower().strip()
 
         duration_days = int(request.form["duration_days"])
         total_slots = int(request.form["total_slots"])
@@ -102,6 +102,9 @@ def create_trek():
         end_date = datetime.strptime(request.form["end_date"], "%Y-%m-%d").date()
 
         description = request.form["description"].strip()
+
+        price = float(request.form["price"])
+        image_url = request.form["image_url"]
 
         # Ensure corrcet start and end date
         if start_date < datetime.today().date():
@@ -121,6 +124,7 @@ def create_trek():
         if total_slots <= 0:
             flash("Total slots must be greater than zero.", "danger")
             return render_template("admin/create_trek.html")
+
         
         # Create trek object
         trek = Trek(
@@ -133,6 +137,8 @@ def create_trek():
             start_date=start_date,
             end_date=end_date,
             description=description,
+            price=price,
+            image_url=image_url
         )
 
         try:

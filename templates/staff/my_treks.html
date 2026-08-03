@@ -54,6 +54,7 @@
                         <th>Trek Name</th>
                         <th>Location</th>
                         <th>Duration</th>
+                        <th>Price</th>
                         <th>Participants</th>
                         <th>Slots</th>
                         <th>Status</th>
@@ -68,7 +69,11 @@
                         <td>{{ trek.id }}</td>
                         <td> <strong>{{ trek.name }}</strong> </td>
                         <td>{{ trek.location }}</td>
-                        <td>{{ trek.duration_days }} Days</td>
+                        <td>
+                            {{ trek.duration_days }}
+                             Day{% if trek.duration_days != 1 %}s{% endif %}
+                        </td>
+                        <td>₹{{ "%.0f"|format(trek.price) }}</td>
                         <td>{{ trek.bookings|length }}</td>
                         <td>{{ trek.available_slots }}/{{ trek.total_slots }}</td>
                         <td>

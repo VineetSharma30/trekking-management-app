@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>Booking #{{ booking.id }}</h2>
+            <p class="text-muted mb-0">
+                View your booking details.
+            </p>
+        </div>
+
+        <a href="{{ url_for('user.my_bookings') }}"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Back
+        </a>
+
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Booking Information</h5>
+                </div>
+                <div class="card-body">
+
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <th>Booking ID</th>
+                            <td>{{ booking.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Booking Date</th>
+                            <td>{{ booking.booking_date.strftime("%d %b %Y") }}</td>
+                        </tr>
+                        <tr>
+                            <th>Amount Paid</th>
+                            <td>₹{{ "%.0f"|format(booking.trek.price) }}</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td>
+
+                                {% if booking.status=="booked" %}
+                                <span class="badge bg-primary py-2">Booked</span>
+
+                                {% elif booking.status=="completed" %}
+                                <span class="badge bg-success py-2">Completed</span>
+
+                                {% else %}
+                                <span class="badge bg-danger py-2">Cancelled</span>
+
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Payment</th>
+                            <td>
+
+                                {% if booking.payment_status=="paid" %}
+                                <span class="badge bg-success py-2">Paid</span>
+
+                                {% elif booking.payment_status=="pending" %}
+                                <span class="badge bg-warning text-dark py-2">Pending</span>
+
+                                {% else %}
+                                <span class="badge bg-primary py-2">Refunded</span>
+
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        Trek Information
+                    </h5>
+                </div>
+                <div class="card-body">
+
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <th>Trek</th>
+                            <td>{{ booking.trek.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Location</th>
+                            <td>{{ booking.trek.location }}</td>
+                        </tr>
+                        <tr>
+                            <th>Duration</th>
+                            <td>
+                                {{ booking.trek.duration_days }}
+                                Day{% if booking.trek.duration_days != 1 %}s{% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Price</th>
+                            <td>₹{{ "%.0f"|format(booking.trek.price) }}</td>
+                        </tr>
+                        <tr>
+                            <th>Trek Dates</th>
+                            <td>
+                                {{ booking.trek.start_date.strftime("%d %b") }}
+                                -
+                                {{ booking.trek.end_date.strftime("%d %b %Y") }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Trek Staff</th>
+                            <td>
+
+                                {% if booking.trek.assigned_staff %}
+                                {{ booking.trek.assigned_staff.full_name }}
+
+                                {% else %}
+                                    <span class="text-muted"> Not Assigned </span>
+
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">
+                Trek Description
+            </h5>
+        </div>
+        <div class="card-body">
+
+            {% if booking.trek.description %}
+            {{ booking.trek.description }}
+
+            {% else %}
+            <span class="text-muted">No description available.</span>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+    <div class="text-end">
+
+        {% if booking.status == "booked" and booking.trek.status == "open" %}
+        <form method="POST"
+            action="{{ url_for('user.cancel_booking', booking_id=booking.id) }}">
+            <button class="btn btn-danger">
+                <i class="bi bi-x-circle"></i>
+                Cancel Booking
+            </button>
+        </form>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

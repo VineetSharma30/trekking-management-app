@@ -22,7 +22,7 @@
                 {% set dashboard = 'staff.dashboard' %}
 
             {% else %}
-                {% set dashboard = '' %}
+                {% set dashboard = 'user.dashboard' %}
 
             {% endif %}
 
@@ -72,21 +72,22 @@
 
                     {% elif current_user.role=="staff" %}
                     <li>
-                        <a href="{{ url_for('staff.my_treks')}}"
+                        <a href="{{ url_for('staff.my_treks') }}"
                         class="{% if request.endpoint=='staff.my_treks' %}active{% endif %}">
                             <i class="bi bi-map"></i>
                             <span>My Treks</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url_for('staff.participants')}}"
+                        <a href="{{ url_for('staff.participants') }}"
                         class="{% if request.endpoint=='staff.participants' %}active{% endif %}">
                             <i class="bi bi-people"></i>
                             <span>Participants</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url_for('staff.profile')}}">
+                        <a href="{{ url_for('staff.profile') }}"
+                        class="{% if request.endpoint=='staff.profile' %}active{% endif %}">
                             <i class="bi bi-person"></i>
                             <span>Profile</span>
                         </a>
@@ -94,20 +95,23 @@
 
                     {% else %}
                     <li>
-                        <a href="#">
-                            <i class="bi bi-box-arrow-right"></i>
+                        <a href="{{ url_for('user.browse_treks') }}"
+                        class="{% if request.endpoint=='user.browse_treks' %}active{% endif %}">
+                            <i class="bi bi-map"></i>
                             <span>Browse Treks</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
-                            <i class="bi bi-box-arrow-right"></i>
+                        <a href="{{ url_for('user.my_bookings') }}"
+                        class="{% if request.endpoint=='user.my_bookings' %}active{% endif %}">
+                            <i class="bi bi-calendar-check"></i>
                             <span>My Bookings</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
-                            <i class="bi bi-box-arrow-right"></i>
+                        <a href="{{ url_for('user.booking_history') }}"
+                        class="{% if request.endpoint=='user.booking_history' %}active{% endif %}">
+                            <i class="bi bi-clock-history"></i>
                             <span>History</span>
                         </a>
                     </li>
@@ -115,7 +119,8 @@
                     {% endif %}
 
                     <li>
-                        <a href="{{ url_for('auth.logout')}}">
+                        <a href="{{ url_for('auth.logout')}}"
+                        class="{% if request.endpoint=='auth.logout' %}active{% endif %}">
                             <i class="bi bi-box-arrow-right"></i>
                             <span>Logout</span>
                         </a>

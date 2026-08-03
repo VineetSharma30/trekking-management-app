@@ -89,6 +89,7 @@
                         <th>Booking ID</th> 
                         <th>User</th> 
                         <th>Trek</th>
+                        <th>Price</th>
                         <th>Date</th>
                         <th>Status</th>
                         <th>Payment</th>
@@ -102,6 +103,7 @@
                         <td>{{ booking.id }}</td>
                         <td>{{ booking.user.full_name }}</td>
                         <td>{{ booking.trek.name }}</td>
+                        <td>₹{{ "%.0f"|format(booking.trek.price) }}</td>
                         <td>{{ booking.booking_date.strftime("%d %b %Y") }}</td>
                         <td>
                             {% if booking.status == "booked" %}

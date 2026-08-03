@@ -39,12 +39,14 @@ class Trek(db.Model) :
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(150), nullable = False)
     location = db.Column(db.String(150), nullable = False)
-    difficulty = db.Column(db.String(20), nullable = False)  # Easy, Moderate, Hard
+    difficulty = db.Column(db.String(20), nullable = False)  # easy, moderate, hard
     duration_days = db.Column(db.Integer, nullable = False)
     total_slots = db.Column(db.Integer, nullable = False)
     available_slots = db.Column(db.Integer, nullable = False)
     assigned_staff_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = True)
-    status = db.Column(db.String(20), nullable = False, default="open")  # Open, Closed, Completed
+    image_url = db.Column(db.String(500),default="")
+    price = db.Column(db.Float,nullable=False,default=0)
+    status = db.Column(db.String(20), nullable = False, default="open")  # open, closed, completed
     start_date = db.Column(db.Date, nullable = False)
     end_date = db.Column(db.Date, nullable = False)
     description = db.Column(db.Text, default="")

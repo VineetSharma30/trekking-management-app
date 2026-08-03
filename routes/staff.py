@@ -89,26 +89,42 @@ def manage_trek(trek_id):
         flash("You are not assigned to this trek.", "danger")
         return redirect(url_for("staff.my_treks"))
 
+    booked_count = len(trek.bookings)
+    max_available_slots = trek.total_slots - booked_count
+
     if request.method == "POST":
 
-        try:
-            available_slots = int(request.form["available_slots"])
-        except ValueError:
-            flash("Invalid slot value.", "danger")
-            return redirect(
-                url_for("staff.manage_trek", trek_id=trek.id)
-            )
-        
-        booked_count = len(trek.bookings)
-        max_available_slots = trek.total_slots - booked_count
+        action = request.form.get("action")
+        allowed_transitions = {
+            "open": "started",
+            "started": "ongoing",
+            "ongoing": "completed"
+        }
 
-        if available_slots < 0 or available_slots > max_available_slots:
-            flash(f"Available slots must be between 0 and {max_available_slots}.","danger")
-            return redirect(url_for("staff.manage_trek", trek_id=trek.id))
+        if action:
+            if allowed_transitions.get(trek.status) != action:
+                flash("Invalid status transition.", "danger")
+                return redirect(url_for("staff.manage_trek", trek_id=trek.id))
 
-        trek.available_slots = available_slots
-        trek.status = request.form["status"]
+            trek.status = action
 
+        else :
+            trek.status = request.form["status"]
+
+            try:
+                available_slots = int(request.form["available_slots"])
+            except ValueError:
+                flash("Invalid slot value.", "danger")
+                return redirect(
+                    url_for("staff.manage_trek", trek_id=trek.id)
+                )
+
+            if available_slots < 0 or available_slots > max_available_slots:
+                flash(f"Available slots must be between 0 and {max_available_slots}.","danger")
+                return redirect(url_for("staff.manage_trek", trek_id=trek.id))
+
+            trek.available_slots = available_slots
+           
         db.session.commit()
         flash("Trek updated successfully.", "success")
 
@@ -116,7 +132,8 @@ def manage_trek(trek_id):
 
     return render_template(
         "staff/manage_trek.html",
-        trek=trek
+        trek=trek,
+        max_available_slots=max_available_slots
     )
 
 
