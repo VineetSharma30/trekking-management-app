@@ -125,11 +125,9 @@
                             </span>
                         </li>
                         <li class="list-group-item px-0">
-                            <strong>Status</strong>
+                            <strong>Start Date</strong>
                             <span class="float-end">
-                                {% if trek.status=="open" %}
-                                <span class="badge bg-success">{{ trek.status|capitalize }}</span>
-                                {% endif %}
+                                {{ trek.start_date.strftime("%d %b %y") }}
                             </span>
                         </li>
 

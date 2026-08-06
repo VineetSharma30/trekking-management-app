@@ -104,7 +104,7 @@ def create_trek():
         description = request.form["description"].strip()
 
         price = float(request.form["price"])
-        image_url = request.form["image_url"]
+        image_url = request.form["image_url"].strip()
 
         # Ensure corrcet start and end date
         if start_date < datetime.today().date():
@@ -123,6 +123,11 @@ def create_trek():
         # Ensure suffucient slots
         if total_slots <= 0:
             flash("Total slots must be greater than zero.", "danger")
+            return render_template("admin/create_trek.html")
+
+        # Ensure price is valid
+        if price <= 0:
+            flash("Price must be greater than zero.", "danger")
             return render_template("admin/create_trek.html")
 
         
@@ -177,7 +182,7 @@ def edit_trek(trek_id):
 
         trek.name = request.form["name"].strip()
         trek.location = request.form["location"].strip()
-        trek.difficulty = request.form["difficulty"].strip()
+        trek.difficulty = request.form["difficulty"].lower().strip()
 
         trek.duration_days = int(request.form["duration_days"])
         trek.total_slots = int(request.form["total_slots"])
@@ -186,12 +191,22 @@ def edit_trek(trek_id):
         trek.end_date = datetime.strptime(request.form["end_date"], "%Y-%m-%d").date()
 
         trek.description = request.form["description"].strip()
-        booked_slots = trek.total_slots - trek.available_slots
+
+        booked_slots = (
+            Booking.query.filter(
+                Booking.trek_id == trek.id,
+                Booking.status == "booked"
+            ).count()
+        )
+        trek.available_slots = trek.total_slots - booked_slots
+        
+        trek.price = float(request.form["price"])
+        trek.image_url = request.form["image_url"].strip()
 
         # Ensure corrcet start and end date
         if trek.start_date < datetime.today().date():
             flash("Start date cannot be in the past.", "danger")
-            return render_template("admin/create_trek.html")
+            return render_template("admin/edit_trek.html", trek=trek)
         
         if trek.end_date < trek.start_date:
             flash("End date cannot be before start date.", "danger")
@@ -209,6 +224,11 @@ def edit_trek(trek_id):
         if trek.total_slots < booked_slots:
             flash(f"Total slots cannot be less than {booked_slots}.", "danger")
             return render_template("admin/edit_trek.html", trek=trek)
+
+        # Ensure price is valid
+        if trek.price <= 0:
+            flash("Price must be greater than zero.", "danger")
+            return render_template("admin/create_trek.html")
         
         try:
             # Commit to db session
@@ -442,7 +462,11 @@ def assign_staff(trek_id):
     if request.method == "POST":
 
         staff_id = request.form["staff_id"]
-        trek.assigned_staff_id = int(staff_id)
+        
+        if staff_id:
+            trek.assigned_staff_id = int(staff_id)
+        else:
+            trek.assigned_staff_id = None
 
         db.session.commit()
         flash("Staff assigned successfully.", "success")

@@ -360,8 +360,8 @@ def profile():
 
     if request.method == "POST":
 
-        full_name = request.form.get("full_name").strip()
-        email = request.form.get("email").strip()
+        full_name = request.form.get("full_name","").strip()
+        email = request.form.get("email","").strip()
         phone = request.form.get("phone", "").strip()
 
         if not full_name:

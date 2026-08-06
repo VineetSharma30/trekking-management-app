@@ -1,142 +1,207 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% block content %}
 
 <div class="container mt-4">
-	<h2>Edit Trek</h2>
 
-	<form method="POST">
-		<div class="mb-3">
-			<label class="form-label">Trek Name</label>
-			<input 
-                type="text" 
-                class="form-control" 
-                name="name" 
-                value="{{ trek.name }}"
-                required
-            />
-		</div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-		<div class="mb-3">
-			<label class="form-label">Location</label>
-			<input 
-                type="text" 
-                class="form-control" 
-                name="location"
-                value="{{ trek.location }}" 
-                required 
-            />
-		</div>
+        <div>
+            <h2>Edit Trek</h2>
+            <p class="text-muted mb-0">
+                Update trek information and details.
+            </p>
+        </div>
 
-		<div class="mb-3">
-			<label class="form-label">Difficulty</label>
+        <a href="{{ url_for('admin.treks') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Back
+        </a>
 
-			<select class="form-select" name="difficulty" required>
-				<option value="">Select</option>
-				<option
-                    value="easy"
-                    {% if trek.difficulty=="easy" %}
-                    selected
-                    {% endif %}>
-                    Easy
-                </option>
-				<option
-                    value="moderate"
-                    {% if trek.difficulty=="moderate" %}
-                    selected
-                    {% endif %}>
-                    Moderate
-                </option>
-				<option
-                    value="hard"
-                    {% if trek.difficulty=="hard" %}
-                    selected
-                    {% endif %}>
-                    Hard
-                </option>
-				
-			</select>
-		</div>
+    </div>
 
-		<div class="mb-3">
-			<label class="form-label">Duration (Days)</label>
-			<input
-				type="number"
-				class="form-control"
-				name="duration_days"
-				min="1"
-                value="{{ trek.duration_days }}"
-				required
-			/>
-		</div>
+    <div class="mb-4">
 
-		<div class="mb-3">
-			<label class="form-label">Price (₹)</label>
-			<input
-				type="number"
-				class="form-control"
-				name="price"
-				min="0"
-				value="{{ trek.price }}"
-				required
-			/>
-		</div>
+        <img
+            src="{{ trek.image_url or url_for('static', filename='images/default-trek.jpg') }}"
+            class="img-fluid rounded shadow-sm w-100 object-fit-cover"
+            style="max-height:280px">
 
-		<div class="mb-3">
-			<label class="form-label">Image URL</label>
-			<input
-				type="url"
-				class="form-control"
-				name="image_url"
-				value="{{ trek.image_url }}"
-				placeholder="https://..."
-			/>
-		</div>
+    </div>
 
-		<div class="mb-3">
-			<label class="form-label">Total Slots</label>
-			<input
-				type="number"
-				class="form-control"
-				name="total_slots"
-				min="1"
-                value="{{ trek.total_slots }}"
-				required
-			/>
-		</div>
+    <form method="POST">
 
-		<div class="mb-3">
-			<label class="form-label">Start Date</label>
-			<input
-				type="date"
-				class="form-control"
-				name="start_date"
-                value="{{ trek.start_date.strftime('%Y-%m-%d') }}"
-				required
-			/>
-		</div>
+        <div class="card shadow-sm mb-4">
 
-		<div class="mb-3">
-			<label class="form-label">End Date</label>
-			<input 
-                type="date" 
-                class="form-control" 
-                name="end_date" 
-                value="{{ trek.end_date.strftime('%Y-%m-%d') }}"
-                required />
-		</div>
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Trek Information</h5>
+            </div>
 
-		<div class="mb-3">
-			<label class="form-label">Description</label>
+            <div class="card-body">
+                <div class="row">
 
-			<textarea
-				class="form-control"
-				rows="4"
-				name="description"
-			>{{ trek.description }}</textarea>
-		</div>
+                    <div class="col-lg-6">
+                        <table class="table table-borderless mb-0">
+                            <tr>
+                                <th class="align-middle">
+                                    Trek Name
+                                </th>
+                                <td>
+                                    <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    name="name" 
+                                    value="{{ trek.name }}"
+                                    required/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th  class="align-middle">Location</th>
+                                <td>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="location"
+                                        value="{{ trek.location }}"
+                                        required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="align-middle">Price (₹)</th>
+                                <td>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        name="price"
+                                        min="1"
+                                        value="{{ trek.price }}"
+                                        required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="align-middle">Duration (Days)</th>
+                                <td>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        name="duration_days"
+                                        min="1"
 
-		<button class="btn btn-success">Update Trek</button>
-	</form>
+                                        value="{{ trek.duration_days }}"
+                                        required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="align-middle">Start Date</th>
+                                <td>
+                                    <input
+                                        type="date"
+                                        class="form-control"
+                                        name="start_date"
+                                        value="{{ trek.start_date.strftime('%Y-%m-%d') }}"
+                                        required>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-lg-6">
+                        <table class="table table-borderless align-items-center mb-0">
+                            <tr>
+                                <th class="align-middle">Difficulty</th>
+                                <td>
+                                    <select class="form-select" name="difficulty" required>
+                                        <option value="easy" {% if trek.difficulty == "easy" %}selected{% endif %}>
+                                            Easy
+                                        </option>
+                                        <option value="moderate" {% if trek.difficulty == "moderate" %}selected{% endif %}>
+                                            Moderate
+                                        </option>
+                                        <option value="hard" {% if trek.difficulty == "hard" %}selected{% endif %}>
+                                            Hard
+                                        </option>
+                                    </select>
+                                        
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="align-middle">Total Slots</th>
+                                <td>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        name="total_slots"
+                                        value="{{ trek.total_slots }}"
+                                        required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="align-middle"> Status </th>
+                                <td>
+                                    <select name="status" class="form-select">
+                                        <option value="open"
+                                            {% if trek.status=="open" %}selected{% endif %}>
+                                            Open
+                                        </option>
+                                        <option value="closed"
+                                            {% if trek.status=="closed" %}selected{% endif %}>
+                                            Closed
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="align-middle">End Date</th>
+                                <td>
+                                    <input
+                                        type="date"
+                                        class="form-control"
+                                        name="end_date"
+                                        value="{{ trek.end_date.strftime('%Y-%m-%d') }}"
+                                        required>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>  
+                </div>
+                <table class="table table-borderless mb-2">
+                    <tr>
+                        <th class="align-middle">Image URL</th>
+                        <td>
+                            <input
+                                type="url"
+                                class="form-control"
+                                name="image_url"
+                                value="{{ trek.image_url }}"
+                                placeholder="https://..."/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="align-middle">
+                            Description
+                        </th>
+                        <td>
+                            <textarea
+                                class="form-control"
+                                cols="54"
+                                rows="3"
+                                name="description"
+                            >{{ trek.description }}</textarea>
+                        </td>
+                    </tr>
+                </table>
+                <div>
+                    <div class="d-flex justify-content-end">
+                        <button
+                            type="submit"
+                            class="btn btn-success">
+                            <i class="bi bi-check-circle"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </form>
 </div>
 
 {% endblock %}

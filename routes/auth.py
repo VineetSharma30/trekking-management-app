@@ -15,7 +15,7 @@ def login():
 
     if request.method == "POST":
 
-        username = request.form["username"].strip()
+        username = request.form["username"].strip().lower()
         password = request.form["password"]
         remember = "remember" in request.form
 
@@ -67,15 +67,15 @@ def register():
     if request.method == "POST":
 
         full_name = request.form["full_name"].strip()
-        username = request.form["username"].strip()
+        username = request.form["username"].strip().lower()
         email = request.form["email"].strip().lower()
         phone = request.form["phone"].strip()
         password = request.form["password"]
         confirm_password = request.form["confirm_password"]
         role = request.form["role"]
 
-        # Ensure pass and confirm pass both are same 
-        if password != confirm_password:
+        # Ensure pass and confirm pass both are same and valid
+        if password != confirm_password or len(password) > 6 :
             flash("Passwords do not match.", "danger")
             return render_template("auth/register.html")
         
@@ -89,6 +89,16 @@ def register():
         existing_email = User.query.filter_by(email=email).first()
         if existing_email:
             flash("Email already registered.", "danger")
+            return render_template("auth/register.html")
+        
+        # Ensure full name is valid
+        if not full_name:
+            flash("Full name is required.", "danger")
+            return render_template("auth/register.html")
+
+        # Prevent admin role creation
+        if role not in ("user", "staff"):
+            flash("Invalid role.", "danger")
             return render_template("auth/register.html")
 
         # Finally create user object

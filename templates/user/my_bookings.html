@@ -59,9 +59,9 @@
                         <td>#{{ booking.id }}</td>
                         <td>{{ booking.trek.name }}</td>
                         <td>
-                            {{ booking.trek.start_date.strftime("%d %b %Y") }}
+                            {{ booking.trek.start_date.strftime("%d %b") }}
                             -
-                            {{ booking.trek.end_date.strftime("%d %b %Y") }}
+                            {{ booking.trek.end_date.strftime("%d %b %y") }}
                         </td>
                         <td>₹{{ "%.0f"|format(booking.trek.price) }}</td>
                         <td>

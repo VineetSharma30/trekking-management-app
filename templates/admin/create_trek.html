@@ -2,100 +2,183 @@
 {% block content %}
 
 <div class="container mt-4">
-	<h2>Create Trek</h2>
+	<div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>Create Trek</h2>
+            <p class="text-muted mb-0">
+        		Add trek information and details.
+            </p>
+        </div>
+
+        <a href="{{ url_for('admin.treks') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Back
+        </a>
+
+    </div>
 
 	<form method="POST">
-		<div class="mb-3">
-			<label class="form-label">Trek Name</label>
-			<input type="text" class="form-control" name="name" required />
-		</div>
 
-		<div class="mb-3">
-			<label class="form-label">Location</label>
-			<input type="text" class="form-control" name="location" required />
-		</div>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
 
-		<div class="mb-3">
-			<label class="form-label">Difficulty</label>
+                <div class="row">
+                    <div class="col-lg-6">
 
-			<select class="form-select" name="difficulty" required>
-				<option value="">Select</option>
-				<option>Easy</option>
-				<option>Moderate</option>
-				<option>Hard</option>
-			</select>
-		</div>
-
-		<div class="mb-3">
-			<label class="form-label">Duration (Days)</label>
-			<input
-				type="number"
-				class="form-control"
-				name="duration_days"
-				min="1"
-				required
-			/>
-		</div>
-
-		<div class="mb-3">
-			<label class="form-label">Price (₹)</label>
-			<input
-				type="number"
-				class="form-control"
-				name="price"
-				min="0"
-				required
-			/>
-		</div>
-
-		<div class="mb-3">
-			<label class="form-label">Image URL</label>
-			<input
-				type="url"
-				class="form-control"
-				name="image_url"
-				placeholder="https://..."
-			/>
-		</div>
-
-		<div class="mb-3">
-			<label class="form-label">Total Slots</label>
-			<input
-				type="number"
-				class="form-control"
-				name="total_slots"
-				min="1"
-				required
-			/>
-		</div>
-
-		<div class="mb-3">
-			<label class="form-label">Start Date</label>
-			<input
-				type="date"
-				class="form-control"
-				name="start_date"
-				required
-			/>
-		</div>
-
-		<div class="mb-3">
-			<label class="form-label">End Date</label>
-			<input type="date" class="form-control" name="end_date" required />
-		</div>
-
-		<div class="mb-3">
-			<label class="form-label">Description</label>
-
-			<textarea
-				class="form-control"
-				rows="4"
-				name="description"
-			></textarea>
-		</div>
-
-		<button class="btn btn-success">Create Trek</button>
-	</form>
+                        <table class="table table-borderless mb-0">
+                            <tr>
+                                <th class="align-middle">
+                                    Trek Name
+                                </th>
+                                <td>
+                                    <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    name="name" 
+                                    placeholder="Enter trek name..."
+                                    required/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th  class="align-middle">Location</th>
+                                <td>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="location"
+                                        placeholder="e.g. Uttarakhand, Nepal"
+                                        required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="align-middle">Price (₹)</th>
+                                <td>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        name="price"
+                                        min="1"
+                                        placeholder="e.g. 2499"
+                                        required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="align-middle">Duration (Days)</th>
+                                <td>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        name="duration_days"
+                                        min="1"
+										placeholder="e.g. 5"
+                                        required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="align-middle">Start Date</th>
+                                <td>
+                                    <input
+                                        type="date"
+                                        class="form-control"
+                                        name="start_date"
+                                        placeholder=""
+                                        required>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-lg-6">
+                        <table class="table table-borderless align-items-center mb-0">
+                            <tr>
+                                <th class="align-middle">Difficulty</th>
+                                <td>
+                                    <select class="form-select" name="difficulty" required>
+										<option value="" selected disabled>--Select difficulty--</option>
+                                        <option value="easy">Easy</option>
+                                        <option value="moderate">Moderate</option>
+                                        <option value="hard" >Hard</option>
+                                    </select>
+                                        
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="align-middle">Total Slots</th>
+                                <td>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        name="total_slots"
+										min="0"
+                                        placeholder="e.g. 20"
+                                        required>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <th class="align-middle"> Status </th>
+                                <td>
+                                    <select name="status" class="form-select">
+										<option value="" selected disabled>--Select status--</option>
+                                        <option value="open">Open</option>
+                                        <option value="closed">Closed</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="align-middle">End Date</th>
+                                <td>
+                                    <input
+                                        type="date"
+                                        class="form-control"
+                                        name="end_date"
+										placeholder=""
+										required>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>  
+                </div>
+                <table class="table table-borderless mb-2">
+                    <tr>
+                        <th class="align-middle">Image URL</th>
+                        <td>
+                            <input
+                                type="url"
+                                class="form-control"
+                                name="image_url"
+                                placeholder="https://..."/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="align-middle">
+                            <label class="form-label">Description</label>
+                        </th>
+                        <td>
+                            <textarea
+                                class="form-control"
+                                cols="54"
+                                rows="3"
+                                name="description"
+								placeholder="Describe the trek, route, highlights, difficulty and important information..."
+                            ></textarea>
+                        </td>
+                    </tr>
+				</table>
+                <div>
+                    <div class="d-flex justify-content-end">
+                        <button
+                            type="submit"
+                            class="btn btn-success">
+                            <i class="bi bi-plus-circle"></i>
+                            Create Trek
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </form>
 </div>
 
 {% endblock %}

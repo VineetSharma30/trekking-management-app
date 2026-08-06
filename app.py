@@ -31,7 +31,7 @@ app.register_blueprint(user.user_bp, url_prefix = "/user")
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 
 def init_db() : 

@@ -51,7 +51,7 @@
 
                     <select name="staff_id" class="form-select" required>
 
-						<option value="" disabled {% if not trek.assigned_staff_id %}selected{% endif %}>
+						<option value="" {% if not trek.assigned_staff_id %}selected{% endif %}>
 							Select Staff
 						</option>
 

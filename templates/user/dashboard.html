@@ -89,7 +89,7 @@
                     <tr>
                         <td>{{ trek.name }}</td>
                         <td>{{ trek.location }}</td>
-                        <td>{{ trek.start_date.strftime("%d %b %Y") }}</td>
+                        <td>{{ trek.start_date.strftime("%d %b %y") }}</td>
                         <td>₹{{ "%.0f"|format(trek.price) }}</td>
                         <td>
                             {% if trek.difficulty == "easy" %}
