@@ -66,7 +66,8 @@ def treks():
         .join(StaffProfile)
         .filter(
             User.role == "staff",
-            StaffProfile.approval_status == "approved"
+            StaffProfile.approval_status == "approved",
+            User.status != "blacklisted"
         )
         .order_by(User.full_name)
         .all()
@@ -102,6 +103,7 @@ def create_trek():
         end_date = datetime.strptime(request.form["end_date"], "%Y-%m-%d").date()
 
         description = request.form["description"].strip()
+        status = request.form.get("status", "open").strip()
 
         price = float(request.form["price"])
         image_url = request.form["image_url"].strip()
@@ -129,6 +131,10 @@ def create_trek():
         if price <= 0:
             flash("Price must be greater than zero.", "danger")
             return render_template("admin/create_trek.html")
+        
+        if status not in ("open", "closed", "started", "ongoing", "completed"):
+            flash("Invalid trek status.", "danger")
+            return render_template("admin/create_trek.html")
 
         
         # Create trek object
@@ -143,7 +149,8 @@ def create_trek():
             end_date=end_date,
             description=description,
             price=price,
-            image_url=image_url
+            image_url=image_url,
+            status=status
         )
 
         try:
@@ -195,13 +202,14 @@ def edit_trek(trek_id):
         booked_slots = (
             Booking.query.filter(
                 Booking.trek_id == trek.id,
-                Booking.status == "booked"
+                Booking.status != "cancelled"
             ).count()
         )
         trek.available_slots = trek.total_slots - booked_slots
         
         trek.price = float(request.form["price"])
         trek.image_url = request.form["image_url"].strip()
+        trek.status = request.form.get("status", trek.status).strip()
 
         # Ensure corrcet start and end date
         if trek.start_date < datetime.today().date():
@@ -228,7 +236,11 @@ def edit_trek(trek_id):
         # Ensure price is valid
         if trek.price <= 0:
             flash("Price must be greater than zero.", "danger")
-            return render_template("admin/create_trek.html")
+            return render_template("admin/edit_trek.html", trek=trek)
+        
+        if trek.status not in ("open", "closed", "started", "ongoing", "completed"):
+            flash("Invalid trek status.", "danger")
+            return render_template("admin/edit_trek.html", trek=trek)
         
         try:
             # Commit to db session
@@ -423,7 +435,7 @@ def reject_staff(user_id):
 
         # Reject the user role as staff
         staff.staff_profile.approval_status = "rejected"
-        staff.status = "inactive"
+        staff.status = "active"
 
         db.session.commit()
         flash("Staff Rejected.", "success")
@@ -455,7 +467,8 @@ def assign_staff(trek_id):
         .join(User.staff_profile)
         .filter(
             User.role == "staff",
-            StaffProfile.approval_status == "approved"
+            StaffProfile.approval_status == "approved",
+            User.status != "blacklisted"
         ).all()
     )
 
@@ -477,27 +490,6 @@ def assign_staff(trek_id):
         trek=trek,
         approved_staff=approved_staff,
     )
-
-
-# Remove Staff from a trek
-@admin_bp.route("/treks/<int:trek_id>/remove_staff", methods=["POST"])
-@login_required
-def remove_staff(trek_id):
-
-    if current_user.role != "admin":
-        flash("Access denied.", "danger")
-        return redirect_dashboard(current_user)
-
-    trek = db.session.get(Trek, trek_id)
-    if trek is None:
-        abort(404)
-
-    trek.assigned_staff_id = None
-
-    db.session.commit()
-    flash("Staff removed from trek.", "success")
-
-    return redirect(url_for("admin.treks"))
 
 
 # Users
@@ -549,11 +541,18 @@ def change_account_status(user_id):
 
     status = request.form["status"]
     next_page = request.form.get("next", "admin.users")
+    allowed_next_pages = {"admin.users", "admin.staff"}
+
+    if next_page not in allowed_next_pages:
+        next_page = "admin.users"
 
     if user.id == current_user.id:
         flash("You cannot blacklist your own account.", "danger")
         return redirect(url_for(next_page))
-
+    
+    if status not in ("active", "blacklisted"):
+        flash("Invalid account status.", "danger")
+        return redirect(url_for(next_page))
     try:
 
         user.status = status

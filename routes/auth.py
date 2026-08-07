@@ -75,8 +75,12 @@ def register():
         role = request.form["role"]
 
         # Ensure pass and confirm pass both are same and valid
-        if password != confirm_password or len(password) > 6 :
+        if password != confirm_password:
             flash("Passwords do not match.", "danger")
+            return render_template("auth/register.html")
+        
+        if len(password) < 6:
+            flash("Password must be at least 6 characters long.", "danger")
             return render_template("auth/register.html")
         
         # Check if username is uniquw

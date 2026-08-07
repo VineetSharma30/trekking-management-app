@@ -46,7 +46,7 @@ class Trek(db.Model) :
     assigned_staff_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = True)
     image_url = db.Column(db.String(500),default="")
     price = db.Column(db.Float,nullable=False,default=0)
-    status = db.Column(db.String(20), nullable = False, default="open")  # open, closed, completed
+    status = db.Column(db.String(20), nullable = False, default="open")  # open, closed, started, ongoing, completed
     start_date = db.Column(db.Date, nullable = False)
     end_date = db.Column(db.Date, nullable = False)
     description = db.Column(db.Text, default="")

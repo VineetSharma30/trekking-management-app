@@ -115,6 +115,13 @@
                             <span>History</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ url_for('user.profile') }}"
+                        class="{% if request.endpoint=='user.profile' %}active{% endif %}">
+                            <i class="bi bi-person"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
 
                     {% endif %}
 

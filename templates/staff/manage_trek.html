@@ -149,6 +149,18 @@
                                             {% if trek.status=="closed" %}selected{% endif %}>
                                             Closed
                                         </option>
+                                        <option value="started"
+                                            {% if trek.status=="started" %}selected{% endif %}>
+                                            Started
+                                        </option>
+                                        <option value="ongoing"
+                                            {% if trek.status=="ongoing" %}selected{% endif %}>
+                                            Ongoing
+                                        </option>
+                                        <option value="completed"
+                                            {% if trek.status=="completed" %}selected{% endif %}>
+                                            Completed
+                                        </option>
                                     </select>
                                 </td>
                             </tr>

@@ -22,8 +22,10 @@ def dashboard():
     )
 
     total_participants = sum(
-        len(trek.bookings)
+        1
         for trek in assigned_treks
+        for booking in trek.bookings
+        if booking.status != "cancelled"
     )
 
     open_treks = sum(
@@ -89,7 +91,10 @@ def manage_trek(trek_id):
         flash("You are not assigned to this trek.", "danger")
         return redirect(url_for("staff.my_treks"))
 
-    booked_count = len(trek.bookings)
+    booked_count = sum(
+        1 for booking in trek.bookings
+        if booking.status != "cancelled"
+    )
     max_available_slots = trek.total_slots - booked_count
 
     if request.method == "POST":
@@ -110,6 +115,10 @@ def manage_trek(trek_id):
 
         else :
             trek.status = request.form["status"]
+
+            if trek.status not in ("open", "closed", "started", "ongoing", "completed"):
+                flash("Invalid trek status.", "danger")
+                return redirect(url_for("staff.manage_trek", trek_id=trek.id))
 
             try:
                 available_slots = int(request.form["available_slots"])

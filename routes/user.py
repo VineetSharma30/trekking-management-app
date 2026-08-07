@@ -285,6 +285,15 @@ def cancel_booking(booking_id):
                 booking_id=booking.id
             )
         )
+    
+    if booking.trek.status != "open":
+        flash("This booking cannot be cancelled after the trek has started or closed.", "warning")
+        return redirect(
+            url_for(
+                "user.booking_details",
+                booking_id=booking.id
+            )
+        )
 
     booking.status = "cancelled"
     booking.payment_status = "refunded"

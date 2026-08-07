@@ -89,6 +89,15 @@
                             {% if trek.status == "open" %}
                             <span class="badge py-2 bg-success"> Open </span>
 
+                            {% elif trek.status == "started" %}
+                            <span class="badge bg-warning text-dark py-2"> Started </span>
+
+                            {% elif trek.status == "ongoing" %}
+                            <span class="badge bg-info text-dark py-2"> Ongoing </span>
+
+                            {% elif trek.status == "completed" %}
+                            <span class="badge bg-primary py-2"> Completed </span>
+
                             {% else %}
                             <span class="badge py-2 bg-danger"> Closed </span>
 
