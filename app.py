@@ -5,11 +5,31 @@ from extensions import db, login_manager
 from routes import auth, admin, staff, user
 from flask_login import current_user
 
+import os
+import shutil
+
 app = Flask(__name__)
 
 # Configs
-app.config["SECRET_KEY"] = "your-secret-key"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///trekking.db"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "your-secret-key")
+
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+elif os.environ.get("VERCEL"):
+    db_path = "/tmp/trekking.db"
+    seed_db = os.path.join(os.path.dirname(os.path.abspath(__file__)), "trekking_init.db")
+    if not os.path.exists(db_path) and os.path.exists(seed_db):
+        try:
+            shutil.copy2(seed_db, db_path)
+        except Exception as e:
+            print("Failed to copy seed db:", e)
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///trekking.db"
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
@@ -54,6 +74,13 @@ def init_db() :
             print("Default admin created.")
         else :
             print("Default admin already exists.")
+
+with app.app_context():
+    try:
+        init_db()
+    except Exception as e:
+        print("Database initialization note:", e)
+
 
 
 @app.route("/")
