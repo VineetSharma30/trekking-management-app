@@ -94,13 +94,6 @@ def index():
             return redirect(url_for("user.dashboard"))
     return render_template("landing.html")
 
-@app.errorhandler(404)
-def handle_404(e):
-    from flask import request
-    return {
-        "path": request.path,
-        "environ": {k: str(v) for k, v in request.environ.items() if "VERCEL" in k or "PATH" in k or "URI" in k or "URL" in k or "MATCH" in k or "ROUT" in k}
-    }, 404
 
 if __name__ == "__main__":
     init_db()
