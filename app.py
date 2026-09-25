@@ -84,8 +84,6 @@ with app.app_context():
 
 
 @app.route("/")
-@app.route("/api/index")
-@app.route("/api/index.py")
 def index():
     if current_user.is_authenticated:
         if current_user.role == "admin":
